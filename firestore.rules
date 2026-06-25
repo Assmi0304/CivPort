@@ -1,0 +1,45 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // Users Collection Rules
+    match /users/{userId} {
+      allow read: if true; // Let everyone see scores & handles!
+      allow create, update: if isOwner(userId);
+    }
+
+    // Issues Collection Rules
+    match /issues/{issueId} {
+      allow read, list: if true; // Publicly readable for maps and feeds
+      allow create: if isSignedIn(); // Any authenticated user can report an issue
+      
+      // Updates are allowed for:
+      // 1. Upvoting (adding uid to upvotedBy array, incrementing upvotes)
+      // 2. Comments (appending to comments array)
+      // 3. Status updates (mock admin interaction)
+      allow update: if isSignedIn();
+    }
+  }
+}

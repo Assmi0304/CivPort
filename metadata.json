@@ -1,0 +1,6 @@
+{
+  "name": "CivPort",
+  "description": "A community portal for citizens to report and map civic issues like potholes, streetlights, garbage, and water leaks with AI analysis and anonymous authentication.",
+  "requestFramePermissions": ["geolocation"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
